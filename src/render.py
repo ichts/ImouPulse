@@ -3,7 +3,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Markup
 
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
@@ -32,9 +32,36 @@ SECTION_TITLES_EN = {
 }
 
 
-def _md_to_html(text: str) -> str:
-    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+def _escape(text: str) -> str:
+    return (text
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;"))
+
+
+def _md_to_html(text: str) -> Markup:
+    url_pattern = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
+    bold_pattern = re.compile(r"\*\*(.+?)\*\*")
+
+    def render_inline(s: str) -> str:
+        s = _escape(s)
+        s = bold_pattern.sub(lambda m: f"<strong>{m.group(1)}</strong>", s)
+        s = url_pattern.sub(
+            lambda m: f'<a href="{_escape(m.group(2))}" target="_blank" rel="noopener noreferrer">{_escape(m.group(1))}</a>',
+            _escape(text) if s == _escape(text) else s,
+        )
+        return s
+
+    def render_inline_safe(raw: str) -> str:
+        escaped = _escape(raw)
+        escaped = bold_pattern.sub(lambda m: f"<strong>{_escape(m.group(1))}</strong>", _escape(raw))
+        escaped = url_pattern.sub(
+            lambda m: f'<a href="{_escape(m.group(2))}" target="_blank" rel="noopener noreferrer">{_escape(m.group(1))}</a>',
+            escaped,
+        )
+        return escaped
+
     lines = text.split("\n")
     html_lines = []
     in_list = False
@@ -44,16 +71,16 @@ def _md_to_html(text: str) -> str:
             if not in_list:
                 html_lines.append("<ul>")
                 in_list = True
-            html_lines.append(f"<li>{_md_to_html(stripped[2:])}</li>")
+            html_lines.append(f"<li>{render_inline_safe(stripped[2:])}</li>")
         else:
             if in_list:
                 html_lines.append("</ul>")
                 in_list = False
             if stripped:
-                html_lines.append(f"<p>{stripped}</p>")
+                html_lines.append(f"<p>{render_inline_safe(stripped)}</p>")
     if in_list:
         html_lines.append("</ul>")
-    return "\n".join(html_lines)
+    return Markup("\n".join(html_lines))
 
 
 def _build_sections(answers: dict[str, str], titles: dict[str, str]) -> list[dict]:
@@ -69,7 +96,7 @@ def _build_sections(answers: dict[str, str], titles: dict[str, str]) -> list[dic
 
 
 def render_reports(date_str: str, answers: dict, templates_dir: str, docs_dir: str) -> None:
-    env = Environment(loader=FileSystemLoader(templates_dir), autoescape=False)
+    env = Environment(loader=FileSystemLoader(templates_dir), autoescape=True)
     tmpl = env.get_template("report.html.j2")
 
     for lang, titles, alt_lang, alt_label in [

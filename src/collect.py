@@ -180,6 +180,34 @@ def collect_innovation() -> list[SourceResult]:
 
 # ── Google Trends ─────────────────────────────────────────────────────────────
 
+def _trends_batch(pt, kws: list[str], timeframe: str, geo: str, source_id: str) -> list[CollectedItem]:
+    rows = []
+    for i in range(0, len(kws), 5):
+        batch = kws[i:i+5]
+        try:
+            pt.build_payload(batch, timeframe=timeframe, geo=geo)
+            df = pt.interest_over_time()
+            if df.empty:
+                continue
+            for kw in batch:
+                if kw in df.columns:
+                    avg = int(df[kw].mean())
+                    peak = int(df[kw].max())
+                    geo_label = "EU(GB)" if geo == "GB" else ("EU(DE)" if geo == "DE" else "Global")
+                    rows.append(CollectedItem(
+                        source=source_id,
+                        title=f"Trend: {kw}",
+                        summary=f"7-day avg: {avg}/100, peak: {peak}/100 ({geo_label})",
+                        url="https://trends.google.com",
+                        published_at=_now_iso(),
+                        collected_at=_now_iso(),
+                    ))
+            time.sleep(2)
+        except Exception as e:
+            print(f"  Trends batch {batch} failed: {e}")
+    return rows
+
+
 def collect_trends() -> list[SourceResult]:
     try:
         from pytrends.request import TrendReq
@@ -195,26 +223,9 @@ def collect_trends() -> list[SourceResult]:
         for attempt in range(2):
             try:
                 pt = TrendReq(hl="en-US", tz=0, timeout=(10, 30))
-                pt.build_payload(kws, timeframe=TRENDS_TIMEFRAME, geo=geo)
-                df = pt.interest_over_time()
-                if df.empty:
-                    results.append(SourceResult(source_id=source_id, status="empty"))
-                    break
-                # Serialize to a list of CollectedItem-like dicts for LLM formatting
-                rows = []
-                for kw in kws:
-                    if kw in df.columns:
-                        avg = int(df[kw].mean())
-                        peak = int(df[kw].max())
-                        rows.append(CollectedItem(
-                            source=source_id,
-                            title=f"Trend: {kw}",
-                            summary=f"7-day average interest: {avg}/100, peak: {peak}/100 (geo={'EU(GB)' if geo else 'Global'})",
-                            url="https://trends.google.com",
-                            published_at=_now_iso(),
-                            collected_at=_now_iso(),
-                        ))
-                results.append(SourceResult(source_id=source_id, status="ok", items=rows))
+                rows = _trends_batch(pt, kws, TRENDS_TIMEFRAME, geo, source_id)
+                status = "ok" if rows else "empty"
+                results.append(SourceResult(source_id=source_id, status=status, items=rows))
                 break
             except Exception as e:
                 if attempt == 0 and "429" in str(e):
