@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ImouPulse · {{ date }}</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f7f5f2;
+  --surface:  #ffffff;
+  --border:   #e2ddd8;
+  --ink:      #1a1714;
+  --ink-2:    #4a4540;
+  --ink-3:    #8a8480;
+  --accent:   #1a3a6e;
+  --accent-2: #e8f0fe;
+  --pulse:    #c0392b;
+  --r:        6px;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* ── Top bar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 48px;
+  font-size: 13px;
+  letter-spacing: .03em;
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.topbar-brand span {
+  color: #93c5fd;
+  font-weight: 400;
+  margin-left: 6px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.topbar-links a {
+  color: #93c5fd;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 12px;
+}
+.topbar-links a:hover { color: #fff; }
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  align-items: start;
+}
+
+/* ── Sidebar TOC ── */
+.sidebar {
+  position: sticky;
+  top: 64px;
+  padding-right: 32px;
+  padding-top: 4px;
+}
+.sidebar-date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 16px;
+}
+.toc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.toc-list {
+  list-style: none;
+}
+.toc-list li {
+  margin-bottom: 2px;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--r);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 12.5px;
+  line-height: 1.4;
+  transition: background 0.12s, color 0.12s;
+}
+.toc-list a:hover {
+  background: var(--accent-2);
+  color: var(--accent);
+}
+.toc-num {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc-list a:hover .toc-num {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Main content ── */
+.main { min-width: 0; }
+
+.report-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+.report-tagline {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pulse);
+  margin-bottom: 6px;
+}
+.report-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+.report-meta {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.report-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.report-meta a:hover { text-decoration: underline; }
+
+/* ── Section cards ── */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-badge {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+/* ── Section content typography ── */
+.section-body p {
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.section-body p:last-child { margin-bottom: 0; }
+
+.section-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.section-body ul {
+  list-style: none;
+  margin-bottom: 14px;
+}
+.section-body ul li {
+  display: flex;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0ede9;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.section-body ul li:last-child { border-bottom: none; }
+.section-body ul li::before {
+  content: "→";
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.section-body a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-2);
+  transition: border-color .1s;
+}
+.section-body a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* "注意" / "Caution" block */
+.section-body p:last-child:has(strong:first-child) {
+  background: #fffbf0;
+  border-left: 3px solid #f59e0b;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 16px;
+}
+
+/* ── Footer ── */
+footer {
+  margin-top: 48px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 60px;
+  }
+  .sidebar {
+    position: static;
+    padding-right: 0;
+    margin-bottom: 24px;
+  }
+  .toc-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc-list li { margin-bottom: 0; }
+  .toc-list a { padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); }
+  .section-card { padding: 20px 18px; }
+  .topbar-links { display: none; }
+  .report-title { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">ImouPulse<span>IoT Security Intel</span></div>
+  <div class="topbar-links">
+    <a href="../{{ alt_lang }}/index.html">{{ alt_label }}</a>
+    <a href="../archive.html">Archive</a>
+  </div>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-date">{{ date }}</div>
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      {% for s in sections %}
+      <li>
+        <a href="#{{ s.id }}">
+          <span class="toc-num">{{ loop.index }}</span>
+          {{ s.title }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <div class="report-header">
+      <div class="report-tagline">Weekly Intelligence Brief</div>
+      <h1 class="report-title">
+        {% if lang == "zh" %}欧洲市场竞情报告{% else %}Europe Market Intel Report{% endif %}
+      </h1>
+      <div class="report-meta">
+        <span>{{ date }}</span>
+        <span>EZVIZ · Tapo · Eufy · Reolink</span>
+        <a href="../{{ alt_lang }}/index.html">{{ alt_label }}</a>
+        <a href="../archive.html">Archive</a>
+      </div>
+    </div>
+
+    {% for s in sections %}
+    <section class="section-card" id="{{ s.id }}">
+      <div class="section-header">
+        <div class="section-badge">{{ loop.index }}</div>
+        <h2 class="section-title">{{ s.title }}</h2>
+      </div>
+      <div class="section-body">
+        {{ s.html_content }}
+      </div>
+    </section>
+    {% endfor %}
+
+    <footer>
+      ImouPulse · Signals only, no product recommendations · Generated {{ date }}
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>

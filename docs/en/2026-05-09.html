@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ImouPulse · 2026-05-09</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f7f5f2;
+  --surface:  #ffffff;
+  --border:   #e2ddd8;
+  --ink:      #1a1714;
+  --ink-2:    #4a4540;
+  --ink-3:    #8a8480;
+  --accent:   #1a3a6e;
+  --accent-2: #e8f0fe;
+  --pulse:    #c0392b;
+  --r:        6px;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* ── Top bar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 48px;
+  font-size: 13px;
+  letter-spacing: .03em;
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.topbar-brand span {
+  color: #93c5fd;
+  font-weight: 400;
+  margin-left: 6px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.topbar-links a {
+  color: #93c5fd;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 12px;
+}
+.topbar-links a:hover { color: #fff; }
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  align-items: start;
+}
+
+/* ── Sidebar TOC ── */
+.sidebar {
+  position: sticky;
+  top: 64px;
+  padding-right: 32px;
+  padding-top: 4px;
+}
+.sidebar-date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 16px;
+}
+.toc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.toc-list {
+  list-style: none;
+}
+.toc-list li {
+  margin-bottom: 2px;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--r);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 12.5px;
+  line-height: 1.4;
+  transition: background 0.12s, color 0.12s;
+}
+.toc-list a:hover {
+  background: var(--accent-2);
+  color: var(--accent);
+}
+.toc-num {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc-list a:hover .toc-num {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Main content ── */
+.main { min-width: 0; }
+
+.report-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+.report-tagline {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pulse);
+  margin-bottom: 6px;
+}
+.report-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+.report-meta {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.report-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.report-meta a:hover { text-decoration: underline; }
+
+/* ── Section cards ── */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-badge {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+/* ── Section content typography ── */
+.section-body p {
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.section-body p:last-child { margin-bottom: 0; }
+
+.section-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.section-body ul {
+  list-style: none;
+  margin-bottom: 14px;
+}
+.section-body ul li {
+  display: flex;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0ede9;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.section-body ul li:last-child { border-bottom: none; }
+.section-body ul li::before {
+  content: "→";
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.section-body a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-2);
+  transition: border-color .1s;
+}
+.section-body a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* "注意" / "Caution" block */
+.section-body p:last-child:has(strong:first-child) {
+  background: #fffbf0;
+  border-left: 3px solid #f59e0b;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 16px;
+}
+
+/* ── Footer ── */
+footer {
+  margin-top: 48px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 60px;
+  }
+  .sidebar {
+    position: static;
+    padding-right: 0;
+    margin-bottom: 24px;
+  }
+  .toc-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc-list li { margin-bottom: 0; }
+  .toc-list a { padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); }
+  .section-card { padding: 20px 18px; }
+  .topbar-links { display: none; }
+  .report-title { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">ImouPulse<span>IoT Security Intel</span></div>
+  <div class="topbar-links">
+    <a href="../zh/index.html">中文</a>
+    <a href="../archive.html">Archive</a>
+  </div>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-date">2026-05-09</div>
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      
+      <li>
+        <a href="#q1">
+          <span class="toc-num">1</span>
+          Competitor Updates
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q2">
+          <span class="toc-num">2</span>
+          Competitor Sentiment
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q3">
+          <span class="toc-num">3</span>
+          Scenario Pain Points
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q4">
+          <span class="toc-num">4</span>
+          Vehicle & Mobile Security
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q5">
+          <span class="toc-num">5</span>
+          Innovation Radar
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q6">
+          <span class="toc-num">6</span>
+          Technology Trends
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q7">
+          <span class="toc-num">7</span>
+          Market Momentum
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q8">
+          <span class="toc-num">8</span>
+          Top 3 Signals This Week
+        </a>
+      </li>
+      
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <div class="report-header">
+      <div class="report-tagline">Weekly Intelligence Brief</div>
+      <h1 class="report-title">
+        Europe Market Intel Report
+      </h1>
+      <div class="report-meta">
+        <span>2026-05-09</span>
+        <span>EZVIZ · Tapo · Eufy · Reolink</span>
+        <a href="../zh/index.html">中文</a>
+        <a href="../archive.html">Archive</a>
+      </div>
+    </div>
+
+    
+    <section class="section-card" id="q1">
+      <div class="section-header">
+        <div class="section-badge">1</div>
+        <h2 class="section-title">Competitor Updates</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>EZVIZ received a positive review for its CB8 home security camera, praised for HD quality. Tapo was included in a roundup of subscription-free security cameras. Eufy had multiple news items, including a new solar-powered camera deal and a notably designed £50 model. Reolink launched a new solar-powered floodlight camera and received a positive review for its Altas model.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">EZVIZ CB8 review</a>: Daily Star review calls EZVIZ CB8 "like watching farm life in HD."</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxNMFFZWG9ybFFXMnlveDFVbURXbWZfQmZ1ankyU2doeDZnaUo4anVCcmNocXo0UlFJSTNZM3A3OC1KVXpUdHotSF9aSWxrNUpxcFFmVnRzUTE4UjBOcVdfMzBNdy0xMTJNYl9YNFJNSnhBLU9mbVlrTlNLUGFkY3RtSlJ3?oc=5" target="_blank" rel="noopener">Tapo in subscription-free roundup</a>: bgr.com lists Tapo among best security cameras that don't require a subscription.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPc3dfWERoeUtxZUJ0dXJ0bFVXQTJBa01ReWc3amMzSUloVWJjUm5ZQzRzZE1abVVtLURkRXBQRkRMMzVaTjRsSl9Ham1yaHcxNk9fQ3R3UXFtcmdTakdUaVF6N3JoaVlYbWlTUHhWYUowdXNuRmYyLUJEQ3FsbFJHeG9xaUJzUHZZRHIwcjBCbWE?oc=5" target="_blank" rel="noopener">Eufy solar camera deal</a>: PCMag reports 40% off Eufy solar security camera.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxONkFjV3F1YUlva2QwWFBKbzh3UjNZbkd3REJjQTdHVllTTnRNN3BYVElUQkhPTXNCVGVXU0JvZWc2TDBvMGM3UHBWUUJRamljSHotc3JsX083emNfZi1CWnNDTnVJcXozU2dNOHRNdV9vWkNEbEo1azcxelZ0aVhlUFoyOUp2NHJPR3ZQZHhHS192NDVET05waEJIa2R2U2twR0VSTnlSVml3UG5pVVN0X1hyOUhDQQ?oc=5" target="_blank" rel="noopener">Eufy new camera design</a>: t3.com reports Eufy's new security camera has its "strangest design yet" at £50.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE50RWQ5eHVMa0Y3SWtyQVBaM1JwX0Nudkt2U01Yazhkd0dkaDFsS3Z3QVFvRVN0cmRnUEdPa2RwU3RqLTNBNTdCT1p6STJjR2JsVzFpb01FVW9aYkkzUVg1ZUs4emRaNTFIVmc?oc=5" target="_blank" rel="noopener">Reolink solar floodlight launch</a>: Man of Many reports Reolink's latest home security floodlight is "pure solar-powered simplicity."</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxQeDA4Qi1OZ2hUNFBHU3FWTzJhMHhfM1gwYV9ZcmRRNkV1eEtCR09HQzRuNXk1a01SbmFUWjJxN25rSHpVOEw0cTdBb0txS0RRYVlsbUlaVThkM3FUTjlxQk1xQlhFRGp5Z3MyS2UteGs0SzdIMGIyOUJjZnQ3UlBSMDJYVFRSTllKaTZIMUNGb3c1YmtYUER2US1aNm4zalJ3MW1VNU5COFdmRUVUME1TWg?oc=5" target="_blank" rel="noopener">Reolink Altas review</a>: creammagazine.com praises Reolink Altas for "subtlety, security and clarity."</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>These signals are based on media coverage and promotional deals, not direct company announcements. Product availability and pricing may vary by region.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q2">
+      <div class="section-header">
+        <div class="section-badge">2</div>
+        <h2 class="section-title">Competitor Sentiment</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>User feedback across Reddit and news sources reveals strong demand for subscription-free, local-storage cameras, with frequent complaints about connectivity failures and poor reliability. EZVIZ and Reolink receive positive reviews for HD quality and solar-powered options, while Tapo and Eufy face criticism for app connectivity issues and subscription dependency. Night Owl is universally panned for hardware failures and poor audio.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t783kt/night_owl/" target="_blank" rel="noopener">Reddit: r/homesecurity – Night Owl</a>: User reports cameras dying quickly, not recording, and audio sounding like garbage; picture quality is good but devices "NEVER work right."</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5zjiv/reolink_argus_pro_4_local_setup_only/" target="_blank" rel="noopener">Reddit: r/homesecurity – Reolink Argus Pro 4</a>: User confirms Reolink cameras work without internet access, planning to use in a separate VLAN with no WAN.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6svu3/simplisafe_versus_blink/" target="_blank" rel="noopener">Reddit: r/homesecurity – Blink vs. SimpliSafe</a>: User reports frequent issues with Blink cameras not connecting to sync module or internet.</p></li>
+<li><p><a href="https://www.reddit.com/r/smarthome/comments/1t54d9r/c113_tapo/" target="_blank" rel="noopener">Reddit: r/smarthome – Tapo C113</a>: User asks how to disable wireless radio on Tapo C113 after setup, indicating desire for local-only operation.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">Reddit: r/homesecurity – No subscription cameras</a>: User seeks Eufy, Reolink, Ring, Arlo, or Wyze with no monthly fees, budget $100–150, easy setup and good night vision.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dggh/looking_for_some_indoor_cameras_with_no/" target="_blank" rel="noopener">Reddit: r/homesecurity – Indoor cameras no subscription</a>: User wants 48-hour playback without subscription, mentions Reolink E1 but notes most brands require subscription for past recordings.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">Google News: EZVIZ CB8 review</a>: Daily Star praises EZVIZ CB8 for HD quality, calling it "like watching farm life in HD."</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPc3dfWERoeUtxZUJ0dXJ0bFVXQTJBa01ReWc3amMzSUloVWJjUm5ZQzRzZE1abVVtLURkRXBQRkRMMzVaTjRsSl9Ham1yaHcxNk9fQ3R3UXFtcmdTakdUaVF6N3JoaVlYbWlTUHhWYUowdXNuRmYyLUJEQ3FsbFJHeG9xaUJzUHZZRHIwcjBCbWE?oc=5" target="_blank" rel="noopener">Google News: Eufy solar camera deal</a>: PCMag highlights Eufy solar camera at 40% off, emphasizing 24-hour security and solar-powered reliability.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>These signals are drawn from a limited sample of Reddit threads and news articles over one week; they may not represent the full user base or long-term trends. Brand-specific complaints (e.g., Night Owl) are based on single-user reports and should not be generalized without broader data.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q3">
+      <div class="section-header">
+        <div class="section-badge">3</div>
+        <h2 class="section-title">Scenario Pain Points</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>Users express unmet needs for no-subscription indoor/outdoor cameras with local 24/7 recording and reliable connectivity, as well as for wireless, battery-powered outdoor cameras with integrated floodlights that work without a sync module. Additionally, renters seek renter-friendly, wireless, no-subscription systems that are easy to install without hardwiring, while some users want basic, non-smart, wired CCTV with local storage to an offline device. False alarm issues with door sensors and unreliable app connectivity for cameras like Blink and Night Owl also indicate gaps in reliability and user experience.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dggh/looking_for_some_indoor_cameras_with_no/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User wants 2 indoor cameras with at least 48 hours of local playback without a subscription, noting most options require a subscription for past recordings.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7r232/recommendations/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User needs 1 wireless outdoor camera with floodlight and 4 indoor cameras, but reports frequent connectivity issues with Blink (2 of 4 cameras fail to connect to sync module).</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6vu92/wireless_renter_friendly_no_subscription/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: Renter moving into a single-family home seeks wireless, no-subscription, renter-friendly security system that is easy to install without hardwiring.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6spo3/looking_for_a_basic_nonsmart_local_storage_cctv/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User wants a basic, non-smart CCTV camera that records motion to an offline device via a physical cable, no WiFi or batteries.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5p5wk/need_a_good_wireless_or_outlet_plug_in_indoor/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User needs a wireless or plug-in indoor camera that records 24/7 and saves all footage, with live check-in and no fancy wiring.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t783kt/night_owl/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User reports Night Owl cameras have poor reliability, including dying quickly, not recording, and bad audio, despite good picture quality.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6jqok/exterior_cameras_recommandations_that_doesnt/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User seeks 2 battery-powered exterior cameras with app access and no subscription, but finds info confusing.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dbzn/frontpoint_door_sensor_falsely_alarmed_at_323am/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User experienced a false alarm from a Frontpoint door sensor at 3:23am, causing fear, with no sign of entry.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>These signals are from a US-centric Reddit audience and may not fully represent European market needs or regulatory contexts. User complaints about specific brands (e.g., Blink, Night Owl) reflect individual experiences and may not indicate systemic product failures.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q4">
+      <div class="section-header">
+        <div class="section-badge">4</div>
+        <h2 class="section-title">Vehicle & Mobile Security</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>Users discuss parking security and in-car monitoring primarily in dashcam contexts, focusing on break-ins, side-impact coverage, and GPS reliability. Pain points include poor app connectivity, deleted footage after accidents, and difficulty keeping wires hidden in headliners. Product feedback highlights Viofo A229 Pro for reliability but notes GPS issues, while Redtiger F7N and FitCamX are mentioned for specific use cases.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t6a8an/seeking_recs_after_car_break_in/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User seeks dashcam recommendations after car break-in in a public parking garage, highlighting need for parking mode and security.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7iy34/dashcam_that_covers_the_cars_sides/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User wants a system covering both sides of the car for parked security, citing a previous hit-and-run while parked.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7fiii/which_brand_has_reliable_gps_reception/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User reports Viofo A229 GPS reception as unreliable for travel tracking, seeking better GPS reliability.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t6jkae/dashcam_deleted_footage/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User reports Viofo A229 Pro footage missing after accident, suspects deletion by police, raising data integrity concerns.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t5zy63/how_to_keep_dashcam_wire_in_headliner/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User struggles with rear dashcam wire falling out of headliner, seeking installation tips.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7tb8w/euki_x10_help/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User reports persistent connection failures with JarvisCam app on EUKI X10, requiring factory resets.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7xgum/dashcam_as_4g_hotspot_options_70mai/" target="_blank" rel="noopener">Reddit r/dashcam</a>: User explores 70mai dashcams with 4G hotspot module for mobile connectivity.</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7kc6q/looking_for_a_commercial_dash_cam_that_does_not/" target="_blank" rel="noopener">Reddit r/dashcam</a>: Commercial user seeks dashcam without driver-facing camera, with mileage tracking across state lines.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>These signals are from dashcam-focused communities, not general IoT security camera users; pain points may not directly translate to home security products.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q5">
+      <div class="section-header">
+        <div class="section-badge">5</div>
+        <h2 class="section-title">Innovation Radar</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>No new camera or security hardware projects were found on ProductHunt, Crowd Supply, or Indiegogo this week. The ProductHunt and Indiegogo feeds returned empty results, and the Crowd Supply feed failed to load.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p>No relevant signals this week.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>The absence of data may be due to feed availability or timing, not necessarily a lack of actual launches.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q6">
+      <div class="section-header">
+        <div class="section-badge">6</div>
+        <h2 class="section-title">Technology Trends</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>Discussions this week show strong consumer demand for no-subscription cameras with local storage and 24/7 recording, while battery life remains a pain point for wireless models. Privacy concerns are driving interest in local-only setups and VLAN isolation, though Matter/Thread protocol and edge AI features are not yet prominent in user conversations. EZVIZ and Reolink received positive press for specific models, but no major new developments in Matter/Thread or edge AI were detected.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5p5wk/need_a_good_wireless_or_outlet_plug_in_indoor/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User seeks indoor camera with 24/7 recording and local storage, no subscription.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5zjiv/reolink_argus_pro_4_local_setup_only/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User plans to isolate Reolink Argus Pro 4 in a VLAN with no internet access for privacy.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6spo3/looking_for_a_basic_nonsmart_local_storage_cctv/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User wants a non-smart, wired CCTV camera with local storage to an offline device.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6vu92/wireless_renter_friendly_no_subscription/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: Renter seeks wireless, no-subscription cameras with local storage for a "not great" neighborhood.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User asks for best home camera with no monthly fees, mentions Eufy, Reolink, Ring, Arlo, Wyze.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6jqok/exterior_cameras_recommandations_that_doesnt/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User wants battery-powered outdoor cameras with app access and no subscription.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTE9IUWh0eGZvWHBOY0NqbjVuaHNvM01sVUJTMXgyUUh6Q3VRRndrd2NzRXp3Y3ZBZGJGb0MzQ09FNTBQT1l6Tk9HOHF5OFdoVmI5dFlKdEZybkZkU25KRk50elZn?oc=5" target="_blank" rel="noopener">WIRED</a>: WIRED lists best indoor security cameras, including EZVIZ and Tapo, for pet/kid monitoring.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">Daily Star</a>: EZVIZ CB8 home security camera reviewed positively for HD farm-life monitoring.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>No discussions specifically mentioned Matter/Thread protocol or edge AI features in the context of security cameras this week. Battery life complaints were implicit in user requests for wired or solar-powered options, but no quantitative benchmarks or new product announcements were found.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q7">
+      <div class="section-header">
+        <div class="section-badge">7</div>
+        <h2 class="section-title">Market Momentum</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>No Google Trends data was successfully retrieved this week. The Google Trends API requests for both Europe (GB) and global keywords returned errors (HTTP 429 and 400), preventing any analysis of brand or category interest changes.</p>
+<p><strong>Signals</strong></p>
+<p>No relevant signals this week.</p>
+<p><strong>Caution</strong></p>
+<p>The absence of data is due to API access failures, not a lack of market activity. Do not infer any trends or conclusions from the missing data.</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q8">
+      <div class="section-header">
+        <div class="section-badge">8</div>
+        <h2 class="section-title">Top 3 Signals This Week</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>Summary</strong></p>
+<p>European consumers show strong and recurring demand for security cameras without subscription fees, with many users specifically seeking local storage and no monthly costs. Multiple Reddit threads and news articles highlight frustration with subscription models and preference for brands like Reolink, Eufy, and Tapo that offer free local recording. The EZVIZ CB8 received a positive review for its HD farm-life monitoring capabilities. A new Blink wired doorbell with 2K video at a low price point was also announced.</p>
+<p><strong>Signals</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dggh/looking_for_some_indoor_cameras_with_no/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User seeks indoor cameras with at least 48 hours of playback without subscription, mentioning Reolink E1.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6jqok/exterior_cameras_recommandations_that_doesnt/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User requests exterior battery-powered cameras accessible via app with no subscription.</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">Reddit r/homesecurity</a>: User asks for best home security camera with no monthly fees, budget $100–150, mentions Eufy, Reolink, Ring, Arlo, Wyze.</p></li>
+<li><p><a href="https://www.reddit.com/r/homeautomation/comments/1t6cxel/best_doorbell_cameras_without_a_subscription_but/" target="_blank" rel="noopener">Reddit r/homeautomation</a>: User seeks wired doorbell camera without subscription but with local video playback via app.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxNMFFZWG9ybFFXMnlveDFVbURXbWZfQmZ1ankyU2doeDZnaUo4anVCcmNocXo0UlFJSTNZM3A3OC1KVXpUdHotSF9aSWxrNUpxcFFmVnRzUTE4UjBOcVdfMzBNdy0xMTJNYl9YNFJNSnhBLU9mbVlrTlNLUGFkY3RtSlJ3?oc=5" target="_blank" rel="noopener">bgr.com</a>: Article lists 8 best security cameras that don't require a subscription.</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">Daily Star</a>: Positive review of EZVIZ CB8 home security camera for HD farm-life monitoring.</p></li>
+<li><p><a href="https://www.the-ambient.com/news/blinks-new-wired-doorbell-brings-2k-video-to-a-surprisingly-low-price/" target="_blank" rel="noopener">The Ambient</a>: Blink launches new wired-only Doorbell 2K+ at a low price point.</p></li>
+</ul>
+<p><strong>Caution</strong></p>
+<p>These signals are primarily from English-language Reddit and news sources, which may not fully represent European market dynamics or regional brand preferences. The strong anti-subscription sentiment is a recurring pattern but should be validated against actual purchase data.</p>
+      </div>
+    </section>
+    
+
+    <footer>
+      ImouPulse · Signals only, no product recommendations · Generated 2026-05-09
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>

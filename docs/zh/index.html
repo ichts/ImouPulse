@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ImouPulse · 2026-05-09</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f7f5f2;
+  --surface:  #ffffff;
+  --border:   #e2ddd8;
+  --ink:      #1a1714;
+  --ink-2:    #4a4540;
+  --ink-3:    #8a8480;
+  --accent:   #1a3a6e;
+  --accent-2: #e8f0fe;
+  --pulse:    #c0392b;
+  --r:        6px;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+/* ── Top bar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 48px;
+  font-size: 13px;
+  letter-spacing: .03em;
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.topbar-brand span {
+  color: #93c5fd;
+  font-weight: 400;
+  margin-left: 6px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.topbar-links a {
+  color: #93c5fd;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 12px;
+}
+.topbar-links a:hover { color: #fff; }
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  align-items: start;
+}
+
+/* ── Sidebar TOC ── */
+.sidebar {
+  position: sticky;
+  top: 64px;
+  padding-right: 32px;
+  padding-top: 4px;
+}
+.sidebar-date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 16px;
+}
+.toc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.toc-list {
+  list-style: none;
+}
+.toc-list li {
+  margin-bottom: 2px;
+}
+.toc-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--r);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 12.5px;
+  line-height: 1.4;
+  transition: background 0.12s, color 0.12s;
+}
+.toc-list a:hover {
+  background: var(--accent-2);
+  color: var(--accent);
+}
+.toc-num {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toc-list a:hover .toc-num {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Main content ── */
+.main { min-width: 0; }
+
+.report-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+.report-tagline {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pulse);
+  margin-bottom: 6px;
+}
+.report-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+.report-meta {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.report-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.report-meta a:hover { text-decoration: underline; }
+
+/* ── Section cards ── */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-badge {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+/* ── Section content typography ── */
+.section-body p {
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.section-body p:last-child { margin-bottom: 0; }
+
+.section-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.section-body ul {
+  list-style: none;
+  margin-bottom: 14px;
+}
+.section-body ul li {
+  display: flex;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0ede9;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.section-body ul li:last-child { border-bottom: none; }
+.section-body ul li::before {
+  content: "→";
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.section-body a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-2);
+  transition: border-color .1s;
+}
+.section-body a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* "注意" / "Caution" block */
+.section-body p:last-child:has(strong:first-child) {
+  background: #fffbf0;
+  border-left: 3px solid #f59e0b;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 16px;
+}
+
+/* ── Footer ── */
+footer {
+  margin-top: 48px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 60px;
+  }
+  .sidebar {
+    position: static;
+    padding-right: 0;
+    margin-bottom: 24px;
+  }
+  .toc-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc-list li { margin-bottom: 0; }
+  .toc-list a { padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); }
+  .section-card { padding: 20px 18px; }
+  .topbar-links { display: none; }
+  .report-title { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">ImouPulse<span>IoT Security Intel</span></div>
+  <div class="topbar-links">
+    <a href="../en/index.html">English</a>
+    <a href="../archive.html">Archive</a>
+  </div>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-date">2026-05-09</div>
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      
+      <li>
+        <a href="#q1">
+          <span class="toc-num">1</span>
+          竞品动态
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q2">
+          <span class="toc-num">2</span>
+          竞品舆情
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q3">
+          <span class="toc-num">3</span>
+          场景痛点
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q4">
+          <span class="toc-num">4</span>
+          车载与移动安防
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q5">
+          <span class="toc-num">5</span>
+          创新发现
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q6">
+          <span class="toc-num">6</span>
+          技术趋势
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q7">
+          <span class="toc-num">7</span>
+          市场热度
+        </a>
+      </li>
+      
+      <li>
+        <a href="#q8">
+          <span class="toc-num">8</span>
+          本周 3 个信号
+        </a>
+      </li>
+      
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <div class="report-header">
+      <div class="report-tagline">Weekly Intelligence Brief</div>
+      <h1 class="report-title">
+        欧洲市场竞情报告
+      </h1>
+      <div class="report-meta">
+        <span>2026-05-09</span>
+        <span>EZVIZ · Tapo · Eufy · Reolink</span>
+        <a href="../en/index.html">English</a>
+        <a href="../archive.html">Archive</a>
+      </div>
+    </div>
+
+    
+    <section class="section-card" id="q1">
+      <div class="section-header">
+        <div class="section-badge">1</div>
+        <h2 class="section-title">竞品动态</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周 EZVIZ 发布了 CB8 家用安防摄像头，强调高清画质；Tapo 和 Eufy 均被媒体列入“无需订阅”的最佳安防摄像头推荐列表；Eufy 还推出了设计独特的太阳能安防摄像头新品，并有多款产品在促销中；Reolink 发布了纯太阳能供电的安防泛光灯新品。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">Daily Star</a>: EZVIZ CB8 家用安防摄像头评测，称其“高清画质如同观看农场生活”。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxNMFFZWG9ybFFXMnlveDFVbURXbWZfQmZ1ankyU2doeDZnaUo4anVCcmNocXo0UlFJSTNZM3A3OC1KVXpUdHotSF9aSWxrNUpxcFFmVnRzUTE4UjBOcVdfMzBNdy0xMTJNYl9YNFJNSnhBLU9mbVlrTlNLUGFkY3RtSlJ3?oc=5" target="_blank" rel="noopener">bgr.com</a>: 媒体将 Tapo 和 Eufy 列入“无需订阅的最佳安防摄像头”推荐列表。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxONkFjV3F1YUlva2QwWFBKbzh3UjNZbkd3REJjQTdHVllTTnRNN3BYVElUQkhPTXNCVGVXU0JvZWc2TDBvMGM3UHBWUUJRamljSHotc3JsX083emNfZi1CWnNDTnVJcXozU2dNOHRNdV9vWkNEbEo1azcxelZ0aVhlUFoyOUp2NHJPR3ZQZHhHS192NDVET05waEJIa2R2U2twR0VSTnlSVml3UG5pVVN0X1hyOUhDQQ?oc=" target="_blank" rel="noopener">t3.com</a>: Eufy 发布设计“最奇特”的新款安防摄像头，售价仅 50 英镑。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE50RWQ5eHVMa0Y3SWtyQVBaM1JwX0Nudkt2U01Yazhkd0dkaDFsS3Z3QVFvRVN0cmRnUEdPa2RwU3RqLTNBNTdCT1p6STJjR2JsVzFpb01FVW9aYkkzUVg1ZUs4emRaNTFIVmc?oc=5" target="_blank" rel="noopener">Man of Many</a>: Reolink 推出最新款纯太阳能供电的家用安防泛光灯。</p></li>
+<li><p><a href="https://www.the-ambient.com/deals/this-eufy-deal-gets-you-solar-powered-home-security-for-under-60/" target="_blank" rel="noopener">The Ambient</a>: Eufy SoloCam S220 太阳能安防摄像头促销，价格低于 60 美元。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPc3dfWERoeUtxZUJ0dXJ0bFVXQTJBa01ReWc3amMzSUloVWJjUm5ZQzRzZE1abVVtLURkRXBQRkRMMzVaTjRsSl9Ham1yaHcxNk9fQ3R3UXFtcmdTakdUaVF6N3JoaVlYbWlTUHhWYUowdXNuRmYyLUJEQ3FsbFJHeG9xaUJzUHZZRHIwcjBCbWE?oc=5" target="_blank" rel="noopener">PCMag</a>: Eufy 太阳能安防摄像头促销，可节省 40% 费用。</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>以上信号主要来自媒体评测和促销报道，不包含官方发布的固件更新或公司战略动态。部分促销信息可能仅限特定市场。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q2">
+      <div class="section-header">
+        <div class="section-badge">2</div>
+        <h2 class="section-title">竞品舆情</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周用户对Eufy的正面反馈集中在太阳能供电和免订阅费，负面抱怨较少；对Reolink的正面反馈集中在本地存储和无需订阅，负面抱怨涉及GPS可靠性；对Tapo的正面反馈为性价比，负面抱怨为印度市场因法规无法购买；对EZVIZ的正面反馈为画质清晰，本周无负面信号。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户将Eufy列为无月费摄像头推荐品牌之一</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5zjiv/reolink_argus_pro_4_local_setup_only/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户询问Reolink Argus Pro 4是否支持纯本地设置（无WAN访问）</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户将Reolink列为无月费摄像头推荐品牌之一</p></li>
+<li><p><a href="https://www.reddit.com/r/smarthome/comments/1t7nqav/best_tapo_camera_alternative/" target="_blank" rel="noopener">reddit:r/smarthome</a>: 用户因印度新法规无法购买Tapo，正在寻找替代品牌</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">googlenews:"EZVIZ" camera</a>: 媒体评测EZVIZ CB8画质清晰，称“像看农场生活的高清画面”</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPc3dfWERoeUtxZUJ0dXJ0bFVXQTJBa01ReWc3amMzSUloVWJjUm5ZQzRzZE1abVVtLURkRXBQRkRMMzVaTjRsSl9Ham1yaHcxNk9fQ3R3UXFtcmdTakdUaVF6N3JoaVlYbWlTUHhWYUowdXNuRmYyLUJEQ3FsbFJHeG9xaUJzUHZZRHIwcjBCbWE?oc=5" target="_blank" rel="noopener">googlenews:"Eufy" security camera</a>: 媒体推荐Eufy太阳能安防摄像头，称可节省40%</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxQeDA4Qi1OZ2hUNFBHU3FWTzJhMHhfM1gwYV9ZcmRRNkV1eEtCR09HQzRuNXk1a01SbmFUWjJxN25rSHpVOEw0cTdBb0txS0RRYVlsbUlaVThkM3FUTjlxQk1xQlhFRGp5Z3MyS2UteGs0SzdIMGIyOUJjZnQ3UlBSMDJYVFRSTllKaTZIMUNGb3c1YmtYUER2US1aNm4zalJ3MW1VNU5COFdmRUVUME1TWg?oc=5" target="_blank" rel="noopener">googlenews:"Reolink" camera</a>: 媒体评测Reolink Altas安防摄像头，称其“清晰度和安全性出色”</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7fiii/which_brand_has_reliable_gps_reception/" target="_blank" rel="noopener">reddit:r/Dashcam</a>: 用户抱怨Reolink（Viofo）GPS接收不可靠，称“GPS是唯一问题”</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>本周信号中，Eufy和Reolink的正面反馈主要来自媒体评测和用户推荐，负面反馈仅出现在Reolink的GPS可靠性上；Tapo和EZVIZ的样本量较小，负面反馈仅涉及Tapo的法规限制。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q3">
+      <div class="section-header">
+        <div class="section-badge">3</div>
+        <h2 class="section-title">场景痛点</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周用户主要表达了三个未被满足的具体需求：一是需要完全离线、无订阅的本地存储摄像头，且要求物理有线连接至存储设备；二是需要能24/7连续录制并保存所有视频的室内摄像头，且无需复杂布线；三是需要支持SMB/NAS网络存储导出的NVR系统，以兼容特定品牌摄像头。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6spo3/looking_for_a_basic_nonsmart_local_storage_cctv/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户寻找非智能、本地存储的CCTV摄像头，要求物理有线连接至存储设备，无需WiFi。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5p5wk/need_a_good_wireless_or_outlet_plug_in_indoor/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户需要无线或插电式室内摄像头，能24/7连续录制并保存所有视频，无需复杂布线。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6m7ml/looking_for_an_nvr_compatible_with_lorex/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户寻找兼容Lorex E841/E842/E581摄像头的NVR，要求支持SMB/NAS网络存储导出。</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>以上信号均来自北美用户，欧洲市场可能具有不同的使用场景和需求偏好。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q4">
+      <div class="section-header">
+        <div class="section-badge">4</div>
+        <h2 class="section-title">车载与移动安防</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周关于停车安全、车内监控和移动场景摄像头的讨论主要集中在车辆被撬后的监控需求、对现有产品（如Viofo、Redtiger）的反馈以及特定功能（如4G热点、侧面覆盖、GPS可靠性）的询问上。用户痛点包括设备连接问题、安装困难、以及希望获得无需订阅的本地存储方案。已有产品反馈中，Viofo被多次提及，既有正面使用案例，也有关于GPS和文件删除的质疑。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7xgum/dashcam_as_4g_hotspot_options_70mai/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户询问70mai等品牌是否有内置4G热点模块的行车记录仪。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7iy34/dashcam_that_covers_the_cars_sides/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户寻找能覆盖汽车两侧的摄像头系统，因车辆在停放时侧面被撞。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t6a8an/seeking_recs_after_car_break_in/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户车辆在公共停车场被撬后，寻求行车记录仪推荐。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t7fiii/which_brand_has_reliable_gps_reception/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户反馈Viofo A229的GPS接收不可靠，并寻求GPS更稳定的品牌。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t6jkae/dashcam_deleted_footage/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户质疑Viofo A229 Pro的SD卡中3段视频被“删除”，怀疑是警方所为。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t5zy63/how_to_keep_dashcam_wire_in_headliner/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户询问如何固定从顶棚边缘滑落的行车记录仪后摄像头线缆。</p></li>
+<li><p><a href="https://www.reddit.com/r/Dashcam/comments/1t5u28a/think_my_dashcam_was_incorrectly/" target="_blank" rel="noopener">reddit:r/dashcam</a>: 用户反馈安装工错误地使用胶带缠绕接线，质疑安装安全性。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMiYEFVX3lxTE14M0hVSnNZVHZmX1Rkb29Rc2trdjVqMWZCTlBfcm9EWFhOUS1aVzdHVXd5bG5TbTMwajZFVnNDeEJfT0VaY1RRNHJLTnpyS2x0emdTazdHeTlNVlVyMTVPUw?oc=5" target="_blank" rel="noopener">googlenews:dashcam review 2026</a>: Tom's Guide发布2026年最佳行车记录仪推荐，强调保护车辆。</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>以上信号主要来自北美用户，欧洲市场的具体停车安全讨论较少，且多为通用性产品反馈，未直接提及IMOU品牌。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q5">
+      <div class="section-header">
+        <div class="section-badge">5</div>
+        <h2 class="section-title">创新发现</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周众筹平台（ProductHunt / Crowd Supply / Indiegogo）未发现新型摄像头或安防硬件项目。相关信号源未返回有效数据。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.producthunt.com" target="_blank" rel="noopener">ProductHunt</a>: 本周无相关信号</p></li>
+<li><p><a href="https://www.crowdsupply.com" target="_blank" rel="noopener">Crowd Supply</a>: 本周无相关信号</p></li>
+<li><p><a href="https://www.indiegogo.com" target="_blank" rel="noopener">Indiegogo</a>: 本周无相关信号</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>以上结论仅基于本周数据抓取结果，不排除平台存在其他未收录的安防项目。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q6">
+      <div class="section-header">
+        <div class="section-badge">6</div>
+        <h2 class="section-title">技术趋势</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周用户对无订阅、本地存储的安防摄像头需求强烈，Reolink、Eufy 等品牌因支持本地回放和SD卡存储而受到关注。关于隐私，用户倾向于选择可离线运行、无需云服务的设备，并讨论通过VLAN隔离摄像头网络。Matter/Thread协议和边缘AI功能在本周信号中未见直接讨论，但用户对本地AI处理（如Home Assistant集成）表现出兴趣。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dggh/looking_for_some_indoor_cameras_with_no/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户寻找无需订阅、支持至少48小时本地回放的室内摄像头，提及Reolink E1等型号。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5zjiv/reolink_argus_pro_4_local_setup_only/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户计划将Reolink Argus Pro 4放在独立VLAN中，仅使用本地存储，不连接互联网。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6spo3/looking_for_a_basic_nonsmart_local_storage_cctv/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户寻找非智能、有线连接本地存储设备的CCTV摄像头，明确拒绝WiFi和云服务。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户询问无月费的安防摄像头，预算$100-150，提及Eufy、Reolink、Wyze等品牌。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6vu92/wireless_renter_friendly_no_subscription/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 租户寻找无线、无需订阅、适合租房的安防摄像头方案。</p></li>
+<li><p><a href="https://www.reddit.com/r/homeautomation/comments/1t6d33l/my_ring_doorbell_is_now_a_local_aipowered/" target="_blank" rel="noopener">reddit:r/homeautomation</a>: 用户将Ring门铃改造为本地AI驱动的自动化系统，强调无需云依赖。</p></li>
+<li><p><a href="https://www.reddit.com/r/smarthome/comments/1t6cxel/best_doorbell_cameras_without_a_subscription_but/" target="_blank" rel="noopener">reddit:r/smarthome</a>: 用户寻找无需订阅、支持本地视频回放的有线门铃摄像头。</p></li>
+<li><p><a href="https://www.reddit.com/r/smarthome/comments/1t54d9r/c113_tapo/" target="_blank" rel="noopener">reddit:r/smarthome</a>: 用户询问如何禁用Tapo C113摄像头的无线模块，仅使用SD卡本地存储。</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>本周信号中，Matter/Thread协议和边缘AI功能未被用户直接提及，但本地存储和隐私需求是核心话题。电池续航讨论较少，主要集中于有线或太阳能供电方案。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q7">
+      <div class="section-header">
+        <div class="section-badge">7</div>
+        <h2 class="section-title">市场热度</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周Google Trends数据请求失败（欧洲GB返回429错误，全球返回400错误），无法提供任何品牌或品类词的热度变化分析。其他信号源中未发现与欧洲市场品牌热度直接相关的数据。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p>无相关信号</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>由于Google Trends API返回错误，本周无法提供任何趋势数据。其他来源（Reddit、新闻等）未包含可替代的品牌热度量化信息。</p>
+      </div>
+    </section>
+    
+    <section class="section-card" id="q8">
+      <div class="section-header">
+        <div class="section-badge">8</div>
+        <h2 class="section-title">本周 3 个信号</h2>
+      </div>
+      <div class="section-body">
+        <p><strong>摘要</strong></p>
+<p>本周用户对安防摄像头的核心诉求集中在“无订阅费”和“本地存储”上，多个讨论帖明确寻找无需月费的室内外摄像头。同时，Eufy、Reolink 等品牌在媒体上获得大量促销曝光，EZVIZ CB8 也获得正面评测。此外，用户对 Blink 等品牌的连接可靠性存在普遍抱怨，这为强调本地化、无订阅的竞品创造了市场空间。</p>
+<p><strong>原始信号</strong></p>
+<ul>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7dggh/looking_for_some_indoor_cameras_with_no/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户寻找无需订阅、至少48小时回放的室内摄像头。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t6vu92/wireless_renter_friendly_no_subscription/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 租客寻找无线、无需订阅、适合租房的安防方案。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t5j85g/best_security_camera_for_home_with_no_monthly_fees/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户因邻居被盗而寻求100-150美元预算内、无月费的安防摄像头。</p></li>
+<li><p><a href="https://www.reddit.com/r/homesecurity/comments/1t7r232/recommendations/" target="_blank" rel="noopener">reddit:r/homesecurity</a>: 用户抱怨Blink摄像头频繁出现连接问题，寻求替代方案。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPc3dfWERoeUtxZUJ0dXJ0bFVXQTJBa01ReWc3amMzSUloVWJjUm5ZQzRzZE1abVVtLURkRXBQRkRMMzVaTjRsSl9Ham1yaHcxNk9fQ3R3UXFtcmdTakdUaVF6N3JoaVlYbWlTUHhWYUowdXNuRmYyLUJEQ3FsbFJHeG9xaUJzUHZZRHIwcjBCbWE?oc=5" target="_blank" rel="noopener">googlenews:"Eufy" security camera</a>: PCMag报道Eufy太阳能安防摄像头降价40%。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNOVRMZXBKMU5SbV9SY20wc0FMZ0ZabTlZaWFwNE55TGJSTjFiUy1KRGRlRmtVdzl0c0VibUNaVHlrQ2pmNDZnb2lidl9oRF9lT3RHalNoVVlCYUZ1N3dtYjZDZjJJd3RCWUhwcnpSdXdSVGhBVVNFU0k1UC16aUFKdjhnTDFxeTg?oc=5" target="_blank" rel="noopener">googlenews:"EZVIZ" camera</a>: Daily Star评测EZVIZ CB8，称其画质高清。</p></li>
+<li><p><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxQeDA4Qi1OZ2hUNFBHU3FWTzJhMHhfM1gwYV9ZcmRRNkV1eEtCR09HQzRuNXk1a01SbmFUWjJxN25rSHpVOEw0cTdBb0txS0RRYVlsbUlaVThkM3FUTjlxQk1xQlhFRGp5Z3MyS2UteGs0SzdIMGIyOUJjZnQ3UlBSMDJYVFRSTllKaTZIMUNGb3c1YmtYUER2US1aNm4zalJ3MW1VNU5COFdmRUVUME1TWg?oc=5" target="_blank" rel="noopener">googlenews:"Reolink" camera</a>: creammagazine.com评测Reolink Altas安防摄像头，强调其隐蔽性、安全性和清晰度。</p></li>
+<li><p><a href="https://www.the-ambient.com/news/blinks-new-wired-doorbell-brings-2k-video-to-a-surprisingly-low-price/" target="_blank" rel="noopener">theambient</a>: The Ambient报道Blink推出首款有线视频门铃，支持2K视频且价格低廉。</p></li>
+</ul>
+<p><strong>注意</strong></p>
+<p>以上信号主要来自英文用户社区和媒体，可能不完全代表欧洲市场所有细分群体的偏好；促销报道多为短期活动，需关注其时效性。</p>
+      </div>
+    </section>
+    
+
+    <footer>
+      ImouPulse · Signals only, no product recommendations · Generated 2026-05-09
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>
