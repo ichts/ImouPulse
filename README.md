@@ -10,9 +10,9 @@ Inspired by [BuilderPulse](https://github.com/BuilderPulse/BuilderPulse).
 
 ## Reports
 
-- [最新报告（中文）](https://YOUR_USERNAME.github.io/ImouPulse/zh/)
-- [Latest Report (English)](https://YOUR_USERNAME.github.io/ImouPulse/en/)
-- [Archive](https://YOUR_USERNAME.github.io/ImouPulse/archive.html)
+- [最新报告（中文）](https://ichts.github.io/ImouPulse/zh/)
+- [Latest Report (English)](https://ichts.github.io/ImouPulse/en/)
+- [Archive](https://ichts.github.io/ImouPulse/archive.html)
 
 ---
 
