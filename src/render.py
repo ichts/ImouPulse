@@ -33,36 +33,34 @@ SECTION_TITLES_EN = {
 }
 
 
-def _escape(text: str) -> str:
-    return (text
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;"))
+_URL_PAT = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
+_BOLD_PAT = re.compile(r"\*\*(.+?)\*\*")
+
+
+def _render_inline(raw: str) -> str:
+    parts = []
+    cursor = 0
+    for m in _URL_PAT.finditer(raw):
+        segment = raw[cursor:m.start()]
+        segment = _BOLD_PAT.sub(
+            lambda bm: f"<strong>{Markup.escape(bm.group(1))}</strong>",
+            Markup.escape(segment),
+        )
+        parts.append(segment)
+        label = Markup.escape(m.group(1))
+        href = Markup.escape(m.group(2))
+        parts.append(f'<a href="{href}" target="_blank" rel="noopener noreferrer">{label}</a>')
+        cursor = m.end()
+    tail = raw[cursor:]
+    tail = _BOLD_PAT.sub(
+        lambda bm: f"<strong>{Markup.escape(bm.group(1))}</strong>",
+        Markup.escape(tail),
+    )
+    parts.append(tail)
+    return "".join(parts)
 
 
 def _md_to_html(text: str) -> Markup:
-    url_pattern = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
-    bold_pattern = re.compile(r"\*\*(.+?)\*\*")
-
-    def render_inline(s: str) -> str:
-        s = _escape(s)
-        s = bold_pattern.sub(lambda m: f"<strong>{m.group(1)}</strong>", s)
-        s = url_pattern.sub(
-            lambda m: f'<a href="{_escape(m.group(2))}" target="_blank" rel="noopener noreferrer">{_escape(m.group(1))}</a>',
-            _escape(text) if s == _escape(text) else s,
-        )
-        return s
-
-    def render_inline_safe(raw: str) -> str:
-        escaped = _escape(raw)
-        escaped = bold_pattern.sub(lambda m: f"<strong>{_escape(m.group(1))}</strong>", _escape(raw))
-        escaped = url_pattern.sub(
-            lambda m: f'<a href="{_escape(m.group(2))}" target="_blank" rel="noopener noreferrer">{_escape(m.group(1))}</a>',
-            escaped,
-        )
-        return escaped
-
     lines = text.split("\n")
     html_lines = []
     in_list = False
@@ -72,13 +70,13 @@ def _md_to_html(text: str) -> Markup:
             if not in_list:
                 html_lines.append("<ul>")
                 in_list = True
-            html_lines.append(f"<li>{render_inline_safe(stripped[2:])}</li>")
+            html_lines.append(f"<li>{_render_inline(stripped[2:])}</li>")
         else:
             if in_list:
                 html_lines.append("</ul>")
                 in_list = False
             if stripped:
-                html_lines.append(f"<p>{render_inline_safe(stripped)}</p>")
+                html_lines.append(f"<p>{_render_inline(stripped)}</p>")
     if in_list:
         html_lines.append("</ul>")
     return Markup("\n".join(html_lines))
