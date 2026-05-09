@@ -3,7 +3,8 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, Markup
+from jinja2 import Environment, FileSystemLoader
+from markupsafe import Markup
 
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
